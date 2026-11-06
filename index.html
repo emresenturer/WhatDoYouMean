@@ -1,0 +1,580 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What Do You Mean</title>
+<meta name="description" content="A communication analyzer for the texts you keep re-reading at 2am. Paste a conversation, choose how you want to be talked to, and get calm, private insight.">
+<meta property="og:title" content="What Do You Mean">
+<meta property="og:description" content="Paste a conversation. Choose how you want to be talked to. Get insight that respects your intelligence and your privacy.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://emresenturer.github.io/WhatDoYouMean/">
+<meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#0d1020">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600&display=swap">
+<style>
+:root {
+  --bg: #f4f1ea;
+  --bg-2: #ebe6db;
+  --card: #fffdf8;
+  --ink: #1d1f2b;
+  --ink-2: #4a4d5e;
+  --muted: #6e7183;
+  --line: #ddd6c8;
+  --accent: #8a5a12;
+  --accent-ink: #fffdf8;
+  --accent-soft: #f3e5c8;
+  --focus: #b07a1e;
+  --danger: #a3392f;
+  --danger-soft: #f8e1dd;
+  --ok: #2f6b4f;
+  --shadow: 0 1px 2px rgba(30, 25, 10, .06), 0 8px 24px rgba(30, 25, 10, .06);
+  --serif: "Fraunces", Georgia, "Times New Roman", serif;
+  --sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0d1020;
+    --bg-2: #13172b;
+    --card: #161a30;
+    --ink: #e8e6f0;
+    --ink-2: #b9b8c9;
+    --muted: #8d8ca3;
+    --line: #2a2f4a;
+    --accent: #e7b45f;
+    --accent-ink: #1a1408;
+    --accent-soft: #2e2716;
+    --focus: #f0c47a;
+    --danger: #f08a7e;
+    --danger-soft: #3a1f22;
+    --ok: #8fd0ae;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 12px 32px rgba(0,0,0,.25);
+    color-scheme: dark;
+  }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  background-image: radial-gradient(1200px 600px at 80% -10%, var(--bg-2), transparent 60%);
+  background-attachment: fixed;
+  color: var(--ink);
+  font: 16px/1.6 var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--accent); }
+.wrap { max-width: 1120px; margin: 0 auto; padding: 0 16px; }
+header.site { padding: 40px 0 8px; }
+.brand { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 14px; letter-spacing: .04em; }
+.moon { width: 18px; height: 18px; border-radius: 50%; box-shadow: inset -5px -2px 0 0 var(--accent); }
+h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(32px, 5vw, 52px); line-height: 1.1; margin: 14px 0 10px; letter-spacing: -.01em; }
+.lede { color: var(--ink-2); font-size: 18px; max-width: 640px; margin: 0; }
+main { padding: 24px 0 48px; }
+.grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; }
+@media (min-width: 960px) { .grid { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); align-items: start; } .panel.input { position: sticky; top: 16px; } }
+.panel { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 20px; box-shadow: var(--shadow); min-width: 0; }
+label, .label { display: block; font-weight: 600; font-size: 14px; margin: 0 0 6px; }
+.hint { color: var(--muted); font-size: 13px; margin: 4px 0 0; }
+textarea, input[type=text], input[type=password] {
+  width: 100%; font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line);
+  border-radius: 10px; padding: 10px 12px;
+}
+textarea { min-height: 220px; resize: vertical; font-size: 15px; line-height: 1.55; }
+textarea:focus, input:focus, button:focus-visible, .chip input:focus-visible + span, summary:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.field { margin-bottom: 16px; }
+.row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+fieldset { border: 0; padding: 0; margin: 0 0 16px; min-width: 0; }
+legend { font-weight: 600; font-size: 14px; margin-bottom: 6px; padding: 0; }
+.chips { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+@media (min-width: 560px) { .chips { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (min-width: 960px) { .chips { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.chip { position: relative; }
+.chip input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.chip span { display: block; border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; font-size: 14px; background: var(--bg); cursor: pointer; }
+.chip span small { display: block; color: var(--muted); font-size: 12px; }
+.chip input:checked + span { border-color: var(--accent); background: var(--accent-soft); }
+button { font: inherit; cursor: pointer; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); padding: 9px 14px; font-size: 14px; font-weight: 500; }
+button:hover { border-color: var(--accent); }
+button.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); font-weight: 600; padding: 11px 18px; font-size: 15px; }
+button.primary:hover { filter: brightness(1.05); }
+button.ghost { background: transparent; }
+button:disabled { opacity: .55; cursor: not-allowed; }
+button.small { padding: 6px 10px; font-size: 13px; }
+details.key { border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; margin-bottom: 16px; background: var(--bg); }
+details.key summary { cursor: pointer; font-weight: 600; font-size: 14px; list-style: none; display: flex; justify-content: space-between; gap: 8px; }
+details.key summary::-webkit-details-marker { display: none; }
+.keystate { font-weight: 500; color: var(--muted); font-size: 13px; }
+.keystate.on { color: var(--ok); }
+.keybody { padding-top: 10px; }
+.keybody .row input { flex: 1 1 200px; }
+.privacy { font-size: 13px; color: var(--muted); margin: 8px 0 0; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 4px; }
+.status { font-size: 14px; color: var(--muted); margin-top: 10px; min-height: 1.4em; }
+.empty { text-align: center; padding: 44px 16px; color: var(--muted); }
+.empty h2 { font-family: var(--serif); font-weight: 400; color: var(--ink-2); font-size: 22px; margin: 0 0 8px; }
+.empty ul { text-align: left; display: inline-block; margin: 8px 0 0; padding-left: 18px; font-size: 14px; }
+.loading { padding: 40px 16px; text-align: center; color: var(--ink-2); }
+.pulse { width: 46px; height: 46px; border-radius: 50%; margin: 0 auto 14px; background: var(--accent-soft); position: relative; }
+.pulse::after { content: ""; position: absolute; inset: 0; border-radius: 50%; border: 2px solid var(--accent); animation: ring 1.6s ease-out infinite; }
+@keyframes ring { from { transform: scale(.6); opacity: 1; } to { transform: scale(1.5); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .pulse::after { animation: none; } }
+.error { border: 1px solid var(--danger); background: var(--danger-soft); color: var(--ink); border-radius: 12px; padding: 14px 16px; }
+.error strong { color: var(--danger); }
+.result section { padding: 18px 0; border-top: 1px solid var(--line); }
+.result section:first-of-type { border-top: 0; padding-top: 4px; }
+.result h2 { font-family: var(--serif); font-weight: 600; font-size: 21px; margin: 0 0 10px; }
+.result h3 { font-size: 15px; margin: 0 0 4px; }
+.result p { margin: 0 0 10px; }
+.result ul { margin: 0; padding-left: 20px; }
+.result li { margin-bottom: 6px; }
+.toolbar { display: flex; flex-wrap: wrap; gap: 8px; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.toolbar .meta { color: var(--muted); font-size: 13px; }
+.safety { border: 1px solid var(--danger); background: var(--danger-soft); border-radius: 12px; padding: 12px 14px; margin-bottom: 12px; font-size: 15px; }
+.reading { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; background: var(--bg); }
+.reading .top { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+.lk { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--accent); }
+.bar { height: 6px; border-radius: 6px; background: var(--line); margin-top: 8px; overflow: hidden; }
+.bar > i { display: block; height: 100%; background: var(--accent); border-radius: 6px; }
+.temp { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
+.temp .scale { flex: 1 1 180px; height: 10px; border-radius: 10px; background: linear-gradient(90deg, #5b8fd6, #9a9fb3 50%, #e0884a); position: relative; }
+.temp .scale i { position: absolute; top: -4px; width: 18px; height: 18px; border-radius: 50%; background: var(--card); border: 3px solid var(--ink); transform: translateX(-50%); }
+.temp .tl { font-weight: 600; }
+.reply { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; background: var(--bg); }
+.reply .top { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 6px; }
+.reply blockquote { margin: 0; font-size: 15px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.reply .why { color: var(--muted); font-size: 13px; margin: 6px 0 0; }
+.ask { background: var(--accent-soft); border-radius: 12px; padding: 12px 14px; }
+.raw { white-space: normal; overflow-wrap: anywhere; }
+.note { font-size: 13px; color: var(--muted); margin-top: 14px; }
+.toast { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 8px 14px; border-radius: 10px; font-size: 14px; opacity: 0; transition: opacity .2s; pointer-events: none; }
+.toast.show { opacity: 1; }
+footer { border-top: 1px solid var(--line); padding: 20px 0 36px; color: var(--muted); font-size: 14px; }
+footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 20px; justify-content: space-between; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+</style>
+</head>
+<body>
+<header class="site">
+  <div class="wrap">
+    <div class="brand"><span class="moon" aria-hidden="true"></span>What Do You Mean</div>
+    <h1>For the texts you keep re-reading at 2am.</h1>
+    <p class="lede">Paste a conversation, choose how you want to be talked to, and get a calm, careful read on what was said, what was not, and how to reply.</p>
+  </div>
+</header>
+
+<main>
+  <div class="wrap grid">
+    <form class="panel input" id="form" novalidate>
+      <details class="key" id="keyBox">
+        <summary><span>Anthropic API key</span><span class="keystate" id="keyState">Not set</span></summary>
+        <div class="keybody">
+          <label for="key" class="sr-only">Anthropic API key</label>
+          <div class="row">
+            <input type="password" id="key" placeholder="sk-ant-..." autocomplete="off" spellcheck="false">
+            <button type="button" id="saveKey">Save</button>
+            <button type="button" id="forgetKey" class="ghost">Forget</button>
+          </div>
+          <p class="privacy">Your key stays in this browser and is sent only to api.anthropic.com. Get one at <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">console.anthropic.com/settings/keys</a>.</p>
+        </div>
+      </details>
+
+      <div class="field">
+        <label for="convo">The conversation</label>
+        <textarea id="convo" placeholder="Paste the messages here, one per line if you can.&#10;&#10;Sam: hey, you around later?&#10;Me: maybe, why?&#10;Sam: no reason. forget it" aria-describedby="convoHint"></textarea>
+        <p class="hint" id="convoHint">Names or initials are enough. Remove anything you would not want to share.</p>
+      </div>
+
+      <div class="field">
+        <label for="me">Which speaker is you? <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+        <input type="text" id="me" placeholder="e.g. Me, or Alex" autocomplete="off">
+      </div>
+
+      <fieldset>
+        <legend>How do you want to be talked to?</legend>
+        <div class="chips" role="radiogroup">
+          <label class="chip"><input type="radio" name="style" value="straight" checked><span>Straight talk<small>Direct, no padding</small></span></label>
+          <label class="chip"><input type="radio" name="style" value="gentle"><span>Gentle<small>Warm and careful</small></span></label>
+          <label class="chip"><input type="radio" name="style" value="analytical"><span>Analytical<small>Evidence and odds</small></span></label>
+          <label class="chip"><input type="radio" name="style" value="friend"><span>Like a friend<small>Casual, honest</small></span></label>
+        </div>
+      </fieldset>
+
+      <div class="actions">
+        <button type="submit" class="primary" id="go">Read it for me</button>
+        <button type="button" id="sample">Try a sample</button>
+        <button type="button" id="clear" class="ghost">Clear everything</button>
+      </div>
+      <p class="status" id="status" role="status" aria-live="polite"></p>
+      <p class="privacy">Nothing you paste is saved. The conversation goes from this page straight to Anthropic's API using your key, and disappears when you clear it or close the tab.</p>
+    </form>
+
+    <section class="panel" id="out" aria-live="polite" aria-label="Analysis">
+      <div class="empty" id="empty">
+        <h2>Breathe. Then paste it in.</h2>
+        <p>You will get:</p>
+        <ul>
+          <li>What they most likely mean, plus other readings and how likely each is</li>
+          <li>The tone and emotional temperature</li>
+          <li>What is not in the message, so you do not over-read it</li>
+          <li>How your own messages may be landing</li>
+          <li>Three replies in different tones, ready to copy</li>
+          <li>When it is simpler to just ask</li>
+        </ul>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Built by <a href="https://github.com/emresenturer">Emre Senturer</a></span>
+    <span><a href="https://github.com/emresenturer/WhatDoYouMean">Source on GitHub</a> · Not therapy, not a diagnosis. Just a second pair of eyes.</span>
+  </div>
+</footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  'use strict';
+  var KEY_NAME = 'whatdoyoumean_anthropic_key';
+  var $ = function (id) { return document.getElementById(id); };
+  var form = $('form'), convo = $('convo'), me = $('me'), out = $('out'), statusEl = $('status');
+  var keyInput = $('key'), keyState = $('keyState'), keyBox = $('keyBox'), goBtn = $('go');
+  var lastResult = null;
+
+  var SAMPLE = [
+    'Jordan: hey. saw your story from saturday, looked fun',
+    'Me: it was! you should have come, I did invite you',
+    'Jordan: yeah you mentioned it',
+    'Me: are you mad at me or something?',
+    'Jordan: no',
+    'Jordan: just been a long week',
+    'Me: ok. we still on for thursday?',
+    'Jordan: sure, if you still want to',
+    'Me: why would I not want to??',
+    'Jordan: idk. forget it. thursday is fine'
+  ].join('\n');
+
+  var STYLES = {
+    straight: 'Straight talk: be direct and concise. Name the most likely reading plainly. No cushioning phrases, but never harsh or mocking.',
+    gentle: 'Gentle: warm, reassuring, careful wording. Acknowledge that re-reading messages is stressful. Still be honest.',
+    analytical: 'Analytical: structured and evidence-based. Point to specific words, timing, and patterns as evidence. Use calibrated likelihoods.',
+    friend: 'Like a friend: casual and honest, the way a level-headed close friend would talk over coffee. Light humor is fine, never at anyone\'s expense.'
+  };
+
+  var SYSTEM_PROMPT = [
+    'You are What Do You Mean, a careful communication analyst. A user pastes a text conversation they keep re-reading and wants help understanding it.',
+    '',
+    'Principles:',
+    '- Respect the user\'s intelligence. Be specific to the actual words, timing, punctuation, and length of the messages. No generic advice.',
+    '- Calibrate. Give several plausible readings with honest likelihoods. Short texts are ambiguous; say so when they are.',
+    '- Do not over-read. Explicitly list what the messages do NOT say or prove.',
+    '- Never diagnose anyone or use clinical or pop-psychology labels (no "narcissist", "manipulative", "gaslighting", "toxic", "avoidant", "anxious attachment", disorders, etc.). Describe observable behavior and possible intentions instead.',
+    '- Do not give clinical, medical, or legal advice.',
+    '- If the conversation suggests danger, threats, abuse, coercion, or self-harm by anyone, set safety.concern to true and write a short, calm note encouraging the user to reach real help (local emergency services, or a crisis line). Otherwise set it to false and leave the note empty.',
+    '- Be fair to both sides. In "your_part", note how the user\'s messages might land, kindly and concretely. If the user did not say which speaker they are, infer cautiously and say that you inferred it.',
+    '- Suggested replies must sound like a real person texting, match the conversation\'s register, and each use a clearly different tone. Never manipulative or passive-aggressive.',
+    '- Do not use em-dashes. Use commas, periods, or parentheses.',
+    '',
+    'Respond with ONLY a JSON object, no prose before or after, no code fences, matching this shape:',
+    '{',
+    '  "safety": { "concern": false, "note": "" },',
+    '  "speaker_note": "one short sentence on which speaker you treated as the user",',
+    '  "meaning": {',
+    '    "summary": "2-3 sentences: what they most likely mean",',
+    '    "readings": [ { "reading": "short title", "likelihood": 55, "why": "evidence from the messages" } ]',
+    '  },',
+    '  "tone": { "temperature": 6, "label": "e.g. Cool, a little hurt", "description": "2-3 sentences" },',
+    '  "not_in_message": [ "things the messages do not say or prove" ],',
+    '  "your_part": [ "how specific messages of the user may land, and why" ],',
+    '  "replies": [ { "tone": "e.g. Warm and direct", "text": "the reply text", "why": "what this reply does" } ],',
+    '  "ask_directly": { "when": "when and why simply asking is the better move", "example": "a natural way to ask" }',
+    '}',
+    'Rules for the JSON: "readings" has 3 or 4 items, the first is the most likely, likelihoods are integers that sum to about 100. "temperature" is an integer from 0 (cold, distant) through 5 (neutral) to 10 (heated). "not_in_message" has 3 to 5 items. "your_part" has 2 to 4 items. "replies" has exactly 3 items.'
+  ].join('\n');
+
+  // Danger words: a client-side backstop so the help line appears even if the model misses it.
+  var DANGER_RE = /\b(kill (myself|yourself|you|him|her)|end (it all|my life)|suicid\w*|self[- ]?harm|hurt (myself|yourself)|cut(ting)? myself|want to die|better off dead|no reason to live|overdose|i('| a)m going to hurt|he hits|she hits|hit me|threaten(ed|ing)?)\b/i;
+  var HELP_LINE = 'If anyone in this conversation may be in danger or thinking about self-harm, please reach out for real help now: call your local emergency number, or in the US call or text 988. Outside the US, findahelpline.com lists free, confidential lines in your country.';
+
+  // ---------- key handling ----------
+  function getKey() { try { return localStorage.getItem(KEY_NAME) || ''; } catch (e) { return ''; } }
+  function refreshKeyState() {
+    var k = getKey();
+    keyState.textContent = k ? 'Saved in this browser' : 'Not set';
+    keyState.classList.toggle('on', !!k);
+    keyInput.value = '';
+    keyInput.placeholder = k ? 'Saved. Paste a new key to replace.' : 'sk-ant-...';
+    if (!k) keyBox.open = true;
+  }
+  $('saveKey').addEventListener('click', function () {
+    var v = keyInput.value.trim();
+    if (!v) { toast('Paste a key first'); keyInput.focus(); return; }
+    try { localStorage.setItem(KEY_NAME, v); } catch (e) { toast('Could not save the key in this browser'); return; }
+    refreshKeyState(); toast('Key saved in this browser');
+  });
+  $('forgetKey').addEventListener('click', function () {
+    try { localStorage.removeItem(KEY_NAME); } catch (e) {}
+    refreshKeyState(); toast('Key removed from this browser');
+  });
+
+  // ---------- helpers ----------
+  function el(tag, attrs, children) {
+    var n = document.createElement(tag);
+    if (attrs) for (var a in attrs) {
+      if (a === 'text') n.textContent = attrs[a];
+      else if (a === 'class') n.className = attrs[a];
+      else n.setAttribute(a, attrs[a]);
+    }
+    (children || []).forEach(function (c) { if (c) n.appendChild(typeof c === 'string' ? document.createTextNode(c) : c); });
+    return n;
+  }
+  function str(v) { return (v === null || v === undefined) ? '' : String(v); }
+  function arr(v) { return Array.isArray(v) ? v : (v ? [v] : []); }
+  function toast(msg) { var t = $('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toast._t); toast._t = setTimeout(function () { t.classList.remove('show'); }, 1800); }
+  function setStatus(msg) { statusEl.textContent = msg || ''; }
+  function escapeHtml(s) { return str(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+  // Tiny markdown subset on already-escaped text: headings, bold, lists, paragraphs.
+  function miniMd(text) {
+    var lines = escapeHtml(text).split(/\r?\n/), html = '', inList = false;
+    lines.forEach(function (line) {
+      var b = function (s) { return s.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>'); };
+      var m;
+      if ((m = line.match(/^\s*[-*]\s+(.*)$/))) { if (!inList) { html += '<ul>'; inList = true; } html += '<li>' + b(m[1]) + '</li>'; return; }
+      if (inList) { html += '</ul>'; inList = false; }
+      if ((m = line.match(/^#{1,6}\s+(.*)$/))) { html += '<h3>' + b(m[1]) + '</h3>'; return; }
+      if (line.trim()) html += '<p>' + b(line) + '</p>';
+    });
+    if (inList) html += '</ul>';
+    return html;
+  }
+  function copyText(text, label) {
+    var done = function () { toast((label || 'Copied') + ' to clipboard'); };
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text).then(done, function () { fallbackCopy(text); done(); });
+    } else { fallbackCopy(text); done(); }
+  }
+  function fallbackCopy(text) {
+    var ta = document.createElement('textarea'); ta.value = text; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); } catch (e) {} document.body.removeChild(ta);
+  }
+  function parseJson(text) {
+    var t = str(text).trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/, '');
+    try { return JSON.parse(t); } catch (e) {}
+    var a = t.indexOf('{'), b = t.lastIndexOf('}');
+    if (a !== -1 && b > a) { try { return JSON.parse(t.slice(a, b + 1)); } catch (e) {} }
+    return null;
+  }
+  function selectedStyle() { var r = form.querySelector('input[name=style]:checked'); return r ? r.value : 'straight'; }
+
+  // ---------- states ----------
+  var emptyNode = $('empty');
+  function showEmpty() { out.innerHTML = ''; out.appendChild(emptyNode); }
+  function showLoading() {
+    out.innerHTML = '';
+    out.appendChild(el('div', { class: 'loading' }, [el('div', { class: 'pulse', 'aria-hidden': 'true' }), el('p', { text: 'Reading slowly, the way you would want a friend to.' }), el('p', { class: 'hint', text: 'This usually takes 10 to 40 seconds.' })]));
+  }
+  function showError(title, detail) {
+    out.innerHTML = '';
+    out.appendChild(el('div', { class: 'error', role: 'alert' }, [el('strong', { text: title }), detail ? el('p', { text: detail, style: 'margin:6px 0 0' }) : null]));
+  }
+
+  // ---------- render ----------
+  function render(data, opts) {
+    opts = opts || {};
+    lastResult = data;
+    out.innerHTML = '';
+    var wrap = el('div', { class: 'result' });
+
+    var bar = el('div', { class: 'toolbar' }, [
+      el('span', { class: 'meta', text: 'Style: ' + styleName(opts.style) }),
+      el('div', { class: 'row' }, [
+        btn('Copy all', function () { copyText(toMarkdown(data), 'Analysis'); }),
+        btn('Download .md', function () { download(toMarkdown(data)); })
+      ])
+    ]);
+    wrap.appendChild(bar);
+
+    if (opts.truncated) wrap.appendChild(el('div', { class: 'error' }, [el('strong', { text: 'The answer was cut off. ' }), 'What arrived is shown below. Try a shorter conversation for a complete read.']));
+
+    var concern = (data.safety && data.safety.concern) || opts.danger;
+    if (concern) {
+      var s = el('div', { class: 'safety', role: 'note' });
+      if (data.safety && data.safety.note) s.appendChild(el('p', { text: str(data.safety.note), style: 'margin:0 0 6px' }));
+      s.appendChild(el('p', { text: HELP_LINE, style: 'margin:0' }));
+      wrap.appendChild(s);
+    }
+
+    var m = data.meaning || {};
+    var sec = section('What they most likely mean');
+    if (data.speaker_note) sec.appendChild(el('p', { class: 'hint', text: str(data.speaker_note) }));
+    if (m.summary) sec.appendChild(el('p', { text: str(m.summary) }));
+    arr(m.readings).forEach(function (r, i) {
+      var pct = Math.max(0, Math.min(100, parseInt(r.likelihood, 10) || 0));
+      sec.appendChild(el('div', { class: 'reading' }, [
+        el('div', { class: 'top' }, [el('h3', { text: str(r.reading) }), el('span', { class: 'lk', text: (i === 0 ? 'Most likely · ' : '') + pct + '%' })]),
+        r.why ? el('p', { text: str(r.why), style: 'margin:4px 0 0;color:var(--ink-2);font-size:15px' }) : null,
+        el('div', { class: 'bar', role: 'img', 'aria-label': pct + ' percent likely' }, [el('i', { style: 'width:' + pct + '%' })])
+      ]));
+    });
+    wrap.appendChild(sec);
+
+    var t = data.tone || {};
+    sec = section('Tone and emotional temperature');
+    var temp = Math.max(0, Math.min(10, parseInt(t.temperature, 10)));
+    if (!isNaN(temp)) {
+      sec.appendChild(el('div', { class: 'temp' }, [
+        el('span', { class: 'hint', text: 'Cold', style: 'margin:0' }),
+        el('div', { class: 'scale', role: 'img', 'aria-label': 'Temperature ' + temp + ' out of 10' }, [el('i', { style: 'left:' + (temp * 10) + '%' })]),
+        el('span', { class: 'hint', text: 'Heated', style: 'margin:0' })
+      ]));
+    }
+    if (t.label) sec.appendChild(el('p', { class: 'tl', text: str(t.label) + (isNaN(temp) ? '' : ' (' + temp + '/10)') }));
+    if (t.description) sec.appendChild(el('p', { text: str(t.description) }));
+    wrap.appendChild(sec);
+
+    sec = section('What is NOT in the message');
+    sec.appendChild(list(data.not_in_message));
+    wrap.appendChild(sec);
+
+    sec = section('Your part');
+    sec.appendChild(list(data.your_part));
+    wrap.appendChild(sec);
+
+    sec = section('Suggested replies');
+    arr(data.replies).forEach(function (r) {
+      sec.appendChild(el('div', { class: 'reply' }, [
+        el('div', { class: 'top' }, [el('span', { class: 'lk', text: str(r.tone) }), btn('Copy', function () { copyText(str(r.text), 'Reply'); }, 'small', 'Copy the ' + str(r.tone) + ' reply')]),
+        el('blockquote', { text: str(r.text) }),
+        r.why ? el('p', { class: 'why', text: str(r.why) }) : null
+      ]));
+    });
+    wrap.appendChild(sec);
+
+    var a = data.ask_directly || {};
+    sec = section('When to just ask directly');
+    var box = el('div', { class: 'ask' });
+    if (a.when) box.appendChild(el('p', { text: str(a.when) }));
+    if (a.example) box.appendChild(el('p', { style: 'margin:0' }, [el('strong', { text: 'Try: ' }), '"' + str(a.example) + '"']));
+    sec.appendChild(box);
+    wrap.appendChild(sec);
+
+    wrap.appendChild(el('p', { class: 'note', text: 'This is a reading of words on a screen, not of a person. You know the context better than any model does.' }));
+    out.appendChild(wrap);
+    if (window.innerWidth < 960) out.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  function section(title) { var s = el('section'); s.appendChild(el('h2', { text: title })); return s; }
+  function list(items) { var ul = el('ul'); arr(items).forEach(function (i) { ul.appendChild(el('li', { text: str(i) })); }); return ul; }
+  function btn(label, fn, cls, aria) { var b = el('button', { type: 'button', class: cls || 'small', text: label }); if (aria) b.setAttribute('aria-label', aria); b.addEventListener('click', fn); return b; }
+  function styleName(s) { return { straight: 'Straight talk', gentle: 'Gentle', analytical: 'Analytical', friend: 'Like a friend' }[s] || 'Straight talk'; }
+
+  function renderRaw(text, note) {
+    lastResult = null;
+    out.innerHTML = '';
+    var wrap = el('div', { class: 'result' });
+    wrap.appendChild(el('div', { class: 'toolbar' }, [el('span', { class: 'meta', text: note }), el('div', { class: 'row' }, [btn('Copy', function () { copyText(text, 'Text'); }), btn('Download .md', function () { download(text); })])]));
+    var body = el('div', { class: 'raw' }); body.innerHTML = miniMd(text); // escaped first inside miniMd
+    wrap.appendChild(body);
+    out.appendChild(wrap);
+  }
+
+  function toMarkdown(d) {
+    var L = ['# What Do You Mean: analysis', ''];
+    if (d.safety && d.safety.concern) { L.push('> ' + str(d.safety.note), '> ' + HELP_LINE, ''); }
+    var m = d.meaning || {};
+    L.push('## What they most likely mean', '');
+    if (m.summary) L.push(str(m.summary), '');
+    arr(m.readings).forEach(function (r) { L.push('- **' + str(r.reading) + '** (' + str(r.likelihood) + '%): ' + str(r.why)); });
+    var t = d.tone || {};
+    L.push('', '## Tone and emotional temperature', '', '**' + str(t.label) + '** (' + str(t.temperature) + '/10)', '', str(t.description), '');
+    L.push('## What is NOT in the message', ''); arr(d.not_in_message).forEach(function (i) { L.push('- ' + str(i)); });
+    L.push('', '## Your part', ''); arr(d.your_part).forEach(function (i) { L.push('- ' + str(i)); });
+    L.push('', '## Suggested replies', ''); arr(d.replies).forEach(function (r) { L.push('**' + str(r.tone) + '**', '', '> ' + str(r.text).replace(/\n/g, '\n> '), '', str(r.why), ''); });
+    var a = d.ask_directly || {};
+    L.push('## When to just ask directly', '', str(a.when), '', 'Try: "' + str(a.example) + '"', '');
+    return L.join('\n');
+  }
+  function download(text) {
+    var blob = new Blob([text], { type: 'text/markdown;charset=utf-8' });
+    var url = URL.createObjectURL(blob);
+    var a = el('a', { href: url, download: 'what-do-you-mean.md' });
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  }
+
+  // ---------- API ----------
+  async function analyze(e) {
+    e.preventDefault();
+    var text = convo.value.trim();
+    if (!text) { setStatus('Paste a conversation first.'); convo.focus(); return; }
+    var key = getKey() || keyInput.value.trim();
+    if (!key) { setStatus('Add your Anthropic API key first. It stays in this browser.'); keyBox.open = true; keyInput.focus(); return; }
+    if (!getKey() && keyInput.value.trim()) { try { localStorage.setItem(KEY_NAME, key); } catch (err) {} refreshKeyState(); }
+
+    var style = selectedStyle();
+    var who = me.value.trim();
+    var userText = 'Feedback style: ' + STYLES[style] + '\n' +
+      (who ? 'The user is the speaker labeled "' + who + '".' : 'The user did not say which speaker they are.') +
+      '\n\nConversation:\n"""\n' + text + '\n"""';
+    var danger = DANGER_RE.test(text);
+
+    goBtn.disabled = true; goBtn.textContent = 'Reading...'; setStatus('');
+    showLoading();
+    try {
+      var res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          'x-api-key': key,
+          'anthropic-version': '2023-06-01',
+          'anthropic-beta': 'server-side-fallback-2026-07-01',
+          'anthropic-dangerous-direct-browser-access': 'true'
+        },
+        body: JSON.stringify({
+          model: 'claude-opus-5-5',
+          max_tokens: 8000,
+          output_config: { effort: 'low' },
+          fallbacks: 'default',
+          system: SYSTEM_PROMPT,
+          messages: [{ role: 'user', content: userText }]
+        })
+      });
+      if (!res.ok) {
+        var msg = 'Request failed (' + res.status + ').';
+        try { var err = await res.json(); if (err && err.error && err.error.message) msg = err.error.message; } catch (x) {}
+        showError('The API returned an error.', msg); return;
+      }
+      var data = await res.json();
+      if (data.stop_reason === 'refusal') {
+        showError('The model declined this request.', 'Try rephrasing or removing details that are not needed to understand the conversation.' + (danger ? ' ' + HELP_LINE : ''));
+        return;
+      }
+      var txt = (data.content || []).filter(function (b) { return b.type === 'text'; }).map(function (b) { return b.text; }).join('');
+      var truncated = data.stop_reason === 'max_tokens';
+      var parsed = parseJson(txt);
+      if (parsed && typeof parsed === 'object') render(parsed, { style: style, truncated: truncated, danger: danger });
+      else if (txt.trim()) renderRaw(txt, truncated ? 'Cut off before it finished. Partial answer below.' : 'Could not read the structured answer, so here is the raw text.');
+      else showError('The model returned an empty answer.', 'Try again in a moment.');
+    } catch (err) {
+      showError('Could not reach api.anthropic.com.', 'Check your connection and try again. (' + (err && err.message ? err.message : 'network error') + ')');
+    } finally {
+      goBtn.disabled = false; goBtn.textContent = 'Read it for me';
+    }
+  }
+
+  form.addEventListener('submit', analyze);
+  $('sample').addEventListener('click', function () { convo.value = SAMPLE; me.value = 'Me'; setStatus('Sample loaded. Choose a style and press "Read it for me".'); convo.focus(); });
+  $('clear').addEventListener('click', function () {
+    convo.value = ''; me.value = ''; lastResult = null;
+    var r = form.querySelector('input[value=straight]'); if (r) r.checked = true;
+    showEmpty(); setStatus('Cleared. Nothing from this conversation is stored. Your API key stays until you press Forget.');
+  });
+
+  refreshKeyState();
+})();
+</script>
+</body>
+</html>
